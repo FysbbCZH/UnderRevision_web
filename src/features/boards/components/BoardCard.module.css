@@ -1,0 +1,70 @@
+.card {
+  position: relative;
+  display: flex;
+  min-height: 14rem;
+  flex-direction: column;
+  padding: var(--space-5);
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: var(--shadow-sm);
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.card::after {
+  position: absolute;
+  right: -2.5rem;
+  bottom: -3rem;
+  width: 9rem;
+  height: 9rem;
+  border: 1px solid rgba(30, 103, 103, 0.15);
+  border-radius: 50%;
+  content: "";
+}
+
+.card:hover {
+  border-color: rgba(30, 103, 103, 0.48);
+  box-shadow: 0 1rem 2.5rem rgba(34, 47, 48, 0.12);
+  transform: translateY(-2px);
+}
+
+.sequence {
+  color: var(--color-accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.card h2 {
+  position: relative;
+  z-index: 1;
+  margin: var(--space-5) 0 var(--space-3);
+  font-size: clamp(1.45rem, 3vw, 2rem);
+}
+
+.id {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 var(--space-5);
+  color: var(--color-faint);
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+}
+
+.link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--space-2);
+  margin-top: auto;
+  color: var(--color-accent-strong);
+  font-weight: 750;
+  text-underline-offset: 0.25rem;
+}
