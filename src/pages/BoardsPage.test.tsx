@@ -11,7 +11,6 @@ const board = {
   board_id: "board-1",
   board_name: "Revision Study",
   creator_id: "dev123456",
-  root_directory_id: "root-1",
 };
 
 function renderPage() {

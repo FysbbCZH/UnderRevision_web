@@ -4,14 +4,12 @@ interface Board {
   board_id: string;
   board_name: string;
   creator_id: string;
-  root_directory_id: string;
 }
 
 const initialBoard: Board = {
   board_id: "board-1",
   board_name: "Initial Revision",
   creator_id: "dev123456",
-  root_directory_id: "root-1",
 };
 
 /**
@@ -41,7 +39,6 @@ async function installBoardApi(page: Page, protectedDelete = false) {
         board_id: "board-created",
         board_name: body.board_name,
         creator_id: "dev123456",
-        root_directory_id: "root-created",
       };
       boards = [created, ...boards];
       await route.fulfill({

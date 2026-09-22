@@ -1,8 +1,9 @@
+import type { ApiErrorResponse } from "../../../shared/api/http";
+
 export interface BoardResponse {
   board_id: string;
   board_name: string;
   creator_id: string;
-  root_directory_id: string;
 }
 
 export interface BoardListResponse {
@@ -18,12 +19,7 @@ export interface UpdateBoardRequest {
   board_name: string;
 }
 
-export interface ErrorResponse {
-  error: {
-    code: string;
-    message: string;
-  };
-}
+export type ErrorResponse = ApiErrorResponse;
 
 export type QueryStatus = "idle" | "loading" | "success" | "failure";
 

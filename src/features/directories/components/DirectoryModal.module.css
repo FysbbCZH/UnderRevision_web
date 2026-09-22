@@ -1,0 +1,43 @@
+.form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.form label {
+  font-weight: 750;
+}
+
+.form input,
+.form select {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--color-ink);
+}
+
+.form input:focus,
+.form select:focus {
+  border-color: var(--color-accent);
+}
+
+.form input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.location,
+.note {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  color: var(--color-muted);
+}
+
+.hint {
+  margin: calc(var(--space-2) * -1) 0 var(--space-2);
+  color: var(--color-faint);
+  font-size: 0.82rem;
+}

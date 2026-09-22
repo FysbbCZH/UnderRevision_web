@@ -11,6 +11,7 @@ import { BoardFormModal } from "../features/boards/components/BoardFormModal";
 import { BoardMetadata } from "../features/boards/components/BoardMetadata";
 import { DeleteBoardModal } from "../features/boards/components/DeleteBoardModal";
 import { useBoardDetails } from "../features/boards/model/use-board-details";
+import { DirectoryWorkspace } from "../features/directories/components/DirectoryWorkspace";
 import { Feedback } from "../shared/ui/Feedback";
 import { NotFoundPage } from "./NotFoundPage";
 import styles from "./BoardDetailsPage.module.css";
@@ -261,6 +262,8 @@ export function BoardDetailsPage() {
           <BoardMetadata board={data} />
         </section>
 
+        <DirectoryWorkspace boardId={boardId} />
+
         <section className={styles.danger} aria-labelledby="danger-title">
           <div>
             <p className={styles.dangerLabel}>Danger zone</p>
@@ -287,7 +290,7 @@ export function BoardDetailsPage() {
         <BoardFormModal
           open
           title="重命名 Board"
-          description="ID、创建人和根目录不会改变。"
+          description="Board ID 和创建人不会改变。"
           submitLabel="保存新名称"
           initialName={data.board_name}
           status={renameStatus}

@@ -11,10 +11,14 @@ const board = {
   board_id: "board-1",
   board_name: "Revision Study",
   creator_id: "dev123456",
-  root_directory_id: "root-1",
 };
 
 function renderDetails() {
+  server.use(
+    http.get("*/api/v1/boards/:boardId/directories", () =>
+      HttpResponse.json({ directories: [] }),
+    ),
+  );
   return render(
     <MemoryRouter initialEntries={["/boards/board-1"]}>
       <Routes>
@@ -37,7 +41,7 @@ describe("BoardDetailsPage", () => {
       await screen.findByRole("heading", { name: "Revision Study" }),
     ).toBeInTheDocument();
     expect(screen.getByText("dev123456")).toBeInTheDocument();
-    expect(screen.getByText("root-1")).toBeInTheDocument();
+    expect(screen.queryByText("根目录 ID")).not.toBeInTheDocument();
   });
 
   it("renames the board only after the backend confirms success", async () => {

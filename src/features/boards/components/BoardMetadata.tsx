@@ -19,10 +19,6 @@ export function BoardMetadata({ board }: BoardMetadataProps) {
         <dt>创建人 ID</dt>
         <dd>{board.creator_id}</dd>
       </div>
-      <div>
-        <dt>根目录 ID</dt>
-        <dd>{board.root_directory_id}</dd>
-      </div>
     </dl>
   );
 }

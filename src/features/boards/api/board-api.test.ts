@@ -14,7 +14,6 @@ const board = {
   board_id: "board-1",
   board_name: "Revision Study",
   creator_id: "dev123456",
-  root_directory_id: "root-1",
 };
 
 describe("Board API", () => {
@@ -42,6 +41,22 @@ describe("Board API", () => {
     await expect(listBoards()).rejects.toMatchObject({
       kind: "contract",
     } satisfies Partial<BoardApiError>);
+  });
+
+  it("drops undeclared root directory data from a transitional response", async () => {
+    server.use(
+      http.get("*/api/v1/boards", () =>
+        HttpResponse.json({
+          items: [{ ...board, root_directory_id: "internal-root" }],
+          total: 1,
+        }),
+      ),
+    );
+
+    const result = await listBoards();
+
+    expect(result.items[0]).toEqual(board);
+    expect(result.items[0]).not.toHaveProperty("root_directory_id");
   });
 
   it("keeps the backend message for a business error", async () => {

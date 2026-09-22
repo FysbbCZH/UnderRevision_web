@@ -6,6 +6,7 @@ interface ModalProps extends PropsWithChildren {
   open: boolean;
   title: string;
   description?: string;
+  kicker?: string;
   busy?: boolean;
   onClose: () => void;
   footer: React.ReactNode;
@@ -19,6 +20,7 @@ export function Modal({
   open,
   title,
   description,
+  kicker,
   busy = false,
   onClose,
   footer,
@@ -66,7 +68,7 @@ export function Modal({
         <header className={styles.header}>
           <div>
             <p className={styles.kicker}>
-              {tone === "danger" ? "危险操作" : "Board 管理"}
+              {kicker ?? (tone === "danger" ? "危险操作" : "Board 管理")}
             </p>
             <h2 id={titleId}>{title}</h2>
             {description ? (
