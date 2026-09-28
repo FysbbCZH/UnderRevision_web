@@ -35,6 +35,11 @@ async function installDirectoryApi(page: Page) {
     const boardPath = `/api/v1/boards/${board.board_id}`;
     const collectionPath = `${boardPath}/directories`;
 
+    if (url.pathname === `${boardPath}/items/tree` && method === "GET") {
+      await fulfillJson(route, 200, { root_items: [], directories: [] });
+      return;
+    }
+
     if (url.pathname === boardPath && method === "GET") {
       await fulfillJson(route, 200, board);
       return;
@@ -123,6 +128,7 @@ test("creates, renames, moves and recursively deletes directories", async ({
 }, testInfo) => {
   await installDirectoryApi(page);
   await page.goto("/boards/board-1");
+  await page.getByRole("button", { name: "目录设置" }).click();
 
   await page.getByRole("button", { name: "Source", exact: true }).click();
   await page.getByRole("button", { name: "新建子目录" }).click();
@@ -161,6 +167,7 @@ test("keeps a failed create editable and avoids narrow-screen overflow", async (
   await page.setViewportSize({ width: 360, height: 800 });
   await installDirectoryApi(page);
   await page.goto("/boards/board-1");
+  await page.getByRole("button", { name: "目录设置" }).click();
 
   await page.getByRole("button", { name: "新建顶层目录" }).click();
   await page.getByLabel("目录名称").fill("Duplicate");

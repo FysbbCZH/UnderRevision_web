@@ -144,6 +144,7 @@ export function useDirectoryMutations(
   boardId: string,
   refresh: (options?: RefreshOptions) => Promise<DirectoryRefreshResult>,
   selectDirectory: (directoryId: string | null) => void,
+  onConfirmedDelete?: () => void,
 ) {
   const [state, setState] = useState<DirectoryMutationState>(EMPTY_MUTATION_STATE);
 
@@ -225,12 +226,15 @@ export function useDirectoryMutations(
   );
 
   const remove = useCallback(
-    (directoryId: string, directoryName: string) =>
-      run("delete", directoryId, `已删除目录“${directoryName}”。`, async () => {
+    async (directoryId: string, directoryName: string) => {
+      const result = await run("delete", directoryId, `已删除目录“${directoryName}”。`, async () => {
         await deleteDirectory(boardId, directoryId);
         return { selectId: null };
-      }),
-    [boardId, run],
+      });
+      if (result === "success") onConfirmedDelete?.();
+      return result;
+    },
+    [boardId, onConfirmedDelete, run],
   );
 
   const reconcileUnknown = useCallback(async () => {
@@ -244,6 +248,7 @@ export function useDirectoryMutations(
         refresh,
         selectDirectory,
         setState,
+        onConfirmedDelete,
       );
       return;
     }
@@ -256,7 +261,7 @@ export function useDirectoryMutations(
         message: "已重新读取服务端目录树，请按当前内容确认操作结果。",
       });
     }
-  }, [boardId, refresh, selectDirectory, state]);
+  }, [boardId, onConfirmedDelete, refresh, selectDirectory, state]);
 
   const resetMutation = useCallback(() => setState(EMPTY_MUTATION_STATE), []);
 
@@ -278,6 +283,7 @@ async function reconcileUnknownDelete(
   refresh: (options?: RefreshOptions) => Promise<DirectoryRefreshResult>,
   selectDirectory: (directoryId: string | null) => void,
   setState: (state: DirectoryMutationState) => void,
+  onConfirmedDelete?: () => void,
 ): Promise<void> {
   try {
     await getDirectory(boardId, directoryId);
@@ -311,5 +317,6 @@ async function reconcileUnknownDelete(
       message: "服务端已确认该目录不存在。",
       treeMayBeStale: refreshed.status !== "success",
     });
+    onConfirmedDelete?.();
   }
 }

@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { server } from "../../../test/server";
 import { DirectoryWorkspace } from "./DirectoryWorkspace";
@@ -108,5 +108,28 @@ describe("DirectoryWorkspace", () => {
 
     expect(await screen.findByText("同一位置已存在同名目录。")).toBeInTheDocument();
     expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("notifies the Board coordinator after a confirmed recursive delete", async () => {
+    let directories: unknown[] = [{ ...baseDirectory, children: [] }];
+    server.use(
+      http.get("*/api/v1/boards/:boardId/directories", () =>
+        HttpResponse.json({ directories }),
+      ),
+      http.delete("*/api/v1/boards/:boardId/directories/:directoryId", () => {
+        directories = [];
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    const onDirectoryDeleted = vi.fn();
+    const user = userEvent.setup();
+    render(<DirectoryWorkspace boardId="board-1" onDirectoryDeleted={onDirectoryDeleted} />);
+
+    await user.click(await screen.findByRole("button", { name: /^References$/ }));
+    await user.click(screen.getByRole("button", { name: "删除目录" }));
+    expect(screen.getByText(/其中 Item 都会被永久删除/)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "确认删除目录" }));
+
+    expect(onDirectoryDeleted).toHaveBeenCalledTimes(1);
   });
 });

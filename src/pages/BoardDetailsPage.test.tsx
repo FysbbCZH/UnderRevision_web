@@ -18,6 +18,9 @@ function renderDetails() {
     http.get("*/api/v1/boards/:boardId/directories", () =>
       HttpResponse.json({ directories: [] }),
     ),
+    http.get("*/api/v1/boards/:boardId/items/tree", () =>
+      HttpResponse.json({ root_items: [], directories: [] }),
+    ),
   );
   return render(
     <MemoryRouter initialEntries={["/boards/board-1"]}>
@@ -42,6 +45,7 @@ describe("BoardDetailsPage", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("dev123456")).toBeInTheDocument();
     expect(screen.queryByText("根目录 ID")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "资料" })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("renames the board only after the backend confirms success", async () => {

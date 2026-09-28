@@ -12,6 +12,7 @@ import { BoardMetadata } from "../features/boards/components/BoardMetadata";
 import { DeleteBoardModal } from "../features/boards/components/DeleteBoardModal";
 import { useBoardDetails } from "../features/boards/model/use-board-details";
 import { DirectoryWorkspace } from "../features/directories/components/DirectoryWorkspace";
+import { ItemWorkspace } from "../features/items/components/ItemWorkspace";
 import { Feedback } from "../shared/ui/Feedback";
 import { NotFoundPage } from "./NotFoundPage";
 import styles from "./BoardDetailsPage.module.css";
@@ -37,6 +38,8 @@ export function BoardDetailsPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [detailsMayBeStale, setDetailsMayBeStale] = useState(false);
+  const [contentView, setContentView] = useState<"items" | "directories">("items");
+  const [itemInvalidationVersion, setItemInvalidationVersion] = useState(0);
 
   if (!boardId) {
     return <NotFoundPage />;
@@ -262,7 +265,38 @@ export function BoardDetailsPage() {
           <BoardMetadata board={data} />
         </section>
 
-        <DirectoryWorkspace boardId={boardId} />
+        <section className={styles.content} aria-labelledby="board-content-title">
+          <div className={styles.contentHeading}>
+            <div>
+              <p className="eyebrow">Board content</p>
+              <h2 id="board-content-title" className={styles.sectionTitle}>内容管理</h2>
+            </div>
+            <div className={styles.viewSwitch} role="group" aria-label="Board 内容视图">
+              <button
+                type="button"
+                aria-pressed={contentView === "items"}
+                onClick={() => setContentView("items")}
+              >
+                资料
+              </button>
+              <button
+                type="button"
+                aria-pressed={contentView === "directories"}
+                onClick={() => setContentView("directories")}
+              >
+                目录设置
+              </button>
+            </div>
+          </div>
+          {contentView === "items" ? (
+            <ItemWorkspace boardId={boardId} invalidationVersion={itemInvalidationVersion} />
+          ) : (
+            <DirectoryWorkspace
+              boardId={boardId}
+              onDirectoryDeleted={() => setItemInvalidationVersion((current) => current + 1)}
+            />
+          )}
+        </section>
 
         <section className={styles.danger} aria-labelledby="danger-title">
           <div>

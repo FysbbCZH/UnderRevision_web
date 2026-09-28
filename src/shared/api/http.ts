@@ -13,6 +13,7 @@ type RequestMode = "query" | "mutation";
 interface ApiRequestOptions {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
+  headers?: HeadersInit;
   signal?: AbortSignal;
   mode?: RequestMode;
 }
@@ -37,14 +38,16 @@ export async function apiRequest(
   path: string,
   options: ApiRequestOptions = {},
 ): Promise<Response> {
-  const { method = "GET", body, signal, mode = "query" } = options;
+  const { method = "GET", body, headers, signal, mode = "query" } = options;
+  const requestHeaders = new Headers(headers);
+  const requestBody = serializeRequestBody(body, requestHeaders);
 
   try {
     return await fetch(`${getRuntimeConfig().apiBaseUrl}${path}`, {
       method,
       signal,
-      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: requestHeaders,
+      body: requestBody,
     });
   } catch (error) {
     const isMutation = mode === "mutation";
@@ -58,6 +61,28 @@ export async function apiRequest(
       },
     );
   }
+}
+
+/**
+ * 保持既有对象 JSON 行为，同时让 FormData 自己生成 multipart boundary。
+ */
+function serializeRequestBody(
+  body: unknown,
+  headers: Headers,
+): BodyInit | undefined {
+  if (body === undefined) {
+    return undefined;
+  }
+  if (
+    body instanceof FormData ||
+    body instanceof Blob ||
+    body instanceof URLSearchParams ||
+    typeof body === "string"
+  ) {
+    return body;
+  }
+  headers.set("Content-Type", "application/json");
+  return JSON.stringify(body);
 }
 
 /** 解析 JSON；成功状态返回不可解析内容时按合同错误处理。 */

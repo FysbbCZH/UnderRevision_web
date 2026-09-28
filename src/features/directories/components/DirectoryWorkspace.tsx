@@ -17,6 +17,7 @@ import styles from "./DirectoryWorkspace.module.css";
 
 interface DirectoryWorkspaceProps {
   boardId: string;
+  onDirectoryDeleted?: () => void;
 }
 
 interface CreateTarget {
@@ -28,9 +29,14 @@ type DirectoryTreeState = ReturnType<typeof useDirectoryTree>;
 type DirectoryMutations = ReturnType<typeof useDirectoryMutations>;
 
 /** Board 详情页中的目录管理边界，组合查询、选择和全部目录变更。 */
-export function DirectoryWorkspace({ boardId }: DirectoryWorkspaceProps) {
+export function DirectoryWorkspace({ boardId, onDirectoryDeleted }: DirectoryWorkspaceProps) {
   const tree = useDirectoryTree(boardId);
-  const mutations = useDirectoryMutations(boardId, tree.refresh, tree.selectDirectory);
+  const mutations = useDirectoryMutations(
+    boardId,
+    tree.refresh,
+    tree.selectDirectory,
+    onDirectoryDeleted,
+  );
   const [createTarget, setCreateTarget] = useState<CreateTarget | null>(null);
   const [renameOpen, setRenameOpen] = useState(false);
   const [moveOpen, setMoveOpen] = useState(false);

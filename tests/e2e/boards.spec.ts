@@ -24,6 +24,15 @@ async function installBoardApi(page: Page, protectedDelete = false) {
     const method = request.method();
     const collectionPath = "/api/v1/boards";
 
+    if (/^\/api\/v1\/boards\/[^/]+\/items\/tree$/.test(url.pathname) && method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ root_items: [], directories: [] }),
+      });
+      return;
+    }
+
     if (url.pathname === collectionPath && method === "GET") {
       await route.fulfill({
         status: 200,

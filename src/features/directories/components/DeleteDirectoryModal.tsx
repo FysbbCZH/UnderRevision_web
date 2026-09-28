@@ -45,7 +45,7 @@ export function DeleteDirectoryModal({
         </>
       }
     >
-      <p>该目录及其全部子目录都会被递归删除，前端不会提前移除任何节点。</p>
+      <p>该目录、全部子目录及其中 Item 都会被永久删除，前端不会提前移除任何节点。</p>
       {requestError ? (
         <Feedback title="删除未完成" tone="error">
           {requestError}
